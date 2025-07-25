@@ -6,7 +6,7 @@ Una herramienta avanzada de análisis técnico que utiliza algoritmos cuantitati
 
 ## 📊 Demo en Vivo
 
-🔗 **[Ver Aplicación]([https://tu-app-streamlit.streamlit.app](https://uptrends-signals.streamlit.app/))**
+🔗 https://uptrends-signals.streamlit.app/
 
 ## ✨ Características Principales
 
