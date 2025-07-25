@@ -73,7 +73,83 @@ st.markdown("""
 class UptrendAnalyzer:
     def __init__(self):
         self.symbols = {
-            'stocks_us': ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'NFLX', 'AMD', 'CRM'],
+            # S&P 500 - Top 100 por capitalización de mercado (2025)
+            'sp500_mega_cap': [
+                'NVDA', 'MSFT', 'AAPL', 'GOOGL', 'GOOG', 'AMZN', 'META', 'TSLA', 'BRK.B', 'AVGO',
+                'LLY', 'WMT', 'JPM', 'UNH', 'XOM', 'ORCL', 'MA', 'COST', 'HD', 'PG',
+                'NFLX', 'JNJ', 'BAC', 'CRM', 'ABBV', 'CVX', 'KO', 'AMD', 'PEP', 'TMO',
+                'MRK', 'WFC', 'LIN', 'CSCO', 'ACN', 'DIS', 'ABT', 'VZ', 'ADBE', 'DHR',
+                'TXN', 'PM', 'CMCSA', 'INTC', 'NKE', 'PFE', 'COP', 'NOW', 'QCOM', 'SPGI'
+            ],
+            
+            # S&P 500 - Large Cap (51-150)
+            'sp500_large_cap': [
+                'AMAT', 'CAT', 'INTU', 'UNP', 'GE', 'BKNG', 'T', 'LOW', 'TJX', 'PLD',
+                'UBER', 'AXP', 'UPS', 'RTX', 'BMY', 'ISRG', 'MS', 'SCHW', 'NEE', 'HON',
+                'MU', 'BLK', 'SYK', 'ELV', 'DE', 'AMGN', 'LMT', 'PGR', 'VRTX', 'ADI',
+                'IBM', 'GILD', 'MDLZ', 'TGT', 'CI', 'CB', 'BSX', 'SO', 'REGN', 'CL',
+                'TMUS', 'PYPL', 'PANW', 'LRCX', 'AON', 'CME', 'ITW', 'SHW', 'ZTS', 'APH'
+            ],
+            
+            # S&P 500 - Mid Cap (151-300)
+            'sp500_mid_cap': [
+                'CDNS', 'SNPS', 'MMC', 'CSX', 'PNC', 'ICE', 'APD', 'WM', 'ORLY', 'FCX',
+                'KLAC', 'TFC', 'F', 'ECL', 'NSC', 'USB', 'GM', 'EMR', 'MCO', 'HCA',
+                'DUK', 'EOG', 'FDX', 'WELL', 'GD', 'TDG', 'SLB', 'PSA', 'AJG', 'BDX',
+                'CARR', 'OXY', 'ADSK', 'EW', 'TRV', 'PCAR', 'ROP', 'NXPI', 'CMG', 'CNC',
+                'NOC', 'AFL', 'JCI', 'O', 'AEP', 'ROST', 'SRE', 'PAYX', 'EXC', 'KMB'
+            ],
+            
+            # S&P 500 - Small-Mid Cap (301-500)
+            'sp500_small_cap': [
+                'FAST', 'CTAS', 'EA', 'ODFL', 'KR', 'AMT', 'BK', 'GLW', 'VRSK', 'A',
+                'DOW', 'CTSH', 'IT', 'FANG', 'VMC', 'EXR', 'MCHP', 'SPG', 'GWW', 'XEL',
+                'DD', 'WY', 'VICI', 'KMI', 'MSCI', 'HPQ', 'PWR', 'CPRT', 'IQV', 'MPWR',
+                'DXCM', 'YUM', 'ANSS', 'GEHC', 'IDXX', 'CMI', 'GRMN', 'RMD', 'ED', 'WTW',
+                'ROK', 'OTIS', 'IR', 'ALL', 'FICO', 'EFX', 'ACGL', 'TRGP', 'HSY', 'HIG'
+            ],
+            
+            # NASDAQ Growth Stocks (no incluidas en S&P 500)
+            'nasdaq_growth': [
+                'QQQ', 'SQQQ', 'TQQQ', 'ARKK', 'ARKQ', 'ARKG', 'SHOP', 'ROKU', 'ZM', 'DOCU',
+                'SNOW', 'CRWD', 'OKTA', 'DDOG', 'NET', 'FSLY', 'TWLO', 'PLTR', 'COIN', 'HOOD',
+                'RBLX', 'U', 'PATH', 'DASH', 'ABNB', 'PINS', 'SNAP', 'SPOT', 'SQ', 'PYPL'
+            ],
+            
+            # NYSE Blue Chips y Industriales
+            'nyse_industrials': [
+                'BA', 'MMM', 'GS', 'MCD', 'IBM', 'DIS', 'DD', 'CAT', 'XOM', 'CVX',
+                'PG', 'JNJ', 'KO', 'MRK', 'PFE', 'WMT', 'T', 'VZ', 'NKE', 'HD',
+                'BAC', 'C', 'JPM', 'WFC', 'USB', 'PNC', 'TFC', 'COF', 'AXP', 'BLK'
+            ],
+            
+            # Sectores Específicos
+            'tech_leaders': [
+                'NVDA', 'MSFT', 'AAPL', 'GOOGL', 'META', 'TSLA', 'AMZN', 'NFLX', 'CRM', 'ORCL',
+                'AMD', 'INTC', 'QCOM', 'AVGO', 'TXN', 'ADI', 'LRCX', 'KLAC', 'AMAT', 'MU'
+            ],
+            
+            'biotech_pharma': [
+                'LLY', 'JNJ', 'PFE', 'ABBV', 'MRK', 'TMO', 'ABT', 'DHR', 'BMY', 'AMGN',
+                'GILD', 'VRTX', 'REGN', 'ZTS', 'BDX', 'EW', 'SYK', 'BSX', 'ISRG', 'DXCM'
+            ],
+            
+            'financial_services': [
+                'BRK.B', 'JPM', 'BAC', 'WFC', 'GS', 'MS', 'C', 'USB', 'PNC', 'TFC',
+                'SCHW', 'BLK', 'SPGI', 'ICE', 'CME', 'MCO', 'AON', 'MMC', 'AJG', 'CB'
+            ],
+            
+            'energy_utilities': [
+                'XOM', 'CVX', 'COP', 'EOG', 'SLB', 'OXY', 'FANG', 'KMI', 'TRGP', 'FCX',
+                'NEE', 'SO', 'DUK', 'AEP', 'EXC', 'XEL', 'ED', 'SRE', 'D', 'NGG'
+            ],
+            
+            'consumer_retail': [
+                'WMT', 'COST', 'HD', 'LOW', 'TGT', 'TJX', 'NKE', 'SBUX', 'MCD', 'CMG',
+                'YUM', 'KR', 'DG', 'DLTR', 'WBA', 'CVS', 'ROST', 'ORLY', 'AZO', 'AAP'
+            ],
+            
+            # Mantenemos categorías internacionales
             'stocks_global': ['ASML', 'TSM', 'BABA', 'TM', 'NVO', 'NESN.SW', 'MC.PA', 'OR.PA', 'SAP', 'UL'],
             'etfs': ['SPY', 'QQQ', 'IWM', 'EFA', 'EEM', 'VTI', 'VEA', 'IEFA', 'VWO', 'AGG'],
             'crypto': ['BTC-USD', 'ETH-USD', 'BNB-USD', 'ADA-USD', 'SOL-USD', 'DOT-USD', 'AVAX-USD', 'MATIC-USD', 'LINK-USD', 'UNI-USD'],
@@ -264,17 +340,27 @@ def main():
     
     # Selección de categorías
     categories = {
-        '📈 Acciones US': 'stocks_us',
-        '🌍 Acciones Globales': 'stocks_global',
-        '🏦 ETFs': 'etfs',
-        '₿ Criptomonedas': 'crypto',
+        '🏆 S&P 500 Mega Cap': 'sp500_mega_cap',
+        '📈 S&P 500 Large Cap': 'sp500_large_cap', 
+        '📊 S&P 500 Mid Cap': 'sp500_mid_cap',
+        '🔹 S&P 500 Small Cap': 'sp500_small_cap',
+        '🚀 NASDAQ Growth': 'nasdaq_growth',
+        '🏭 NYSE Industrials': 'nyse_industrials',
+        '💻 Tech Leaders': 'tech_leaders',
+        '🧬 Biotech/Pharma': 'biotech_pharma',
+        '🏦 Financial Services': 'financial_services',
+        '⚡ Energy/Utilities': 'energy_utilities',
+        '🛍️ Consumer/Retail': 'consumer_retail',
+        '🌍 Global Stocks': 'stocks_global',
+        '📊 ETFs': 'etfs',
+        '₿ Crypto': 'crypto',
         '💱 Forex': 'forex'
     }
     
     selected_categories = st.sidebar.multiselect(
         "Selecciona categorías a analizar:",
         list(categories.keys()),
-        default=['📈 Acciones US', '₿ Criptomonedas']
+        default=['🏆 S&P 500 Mega Cap', '💻 Tech Leaders']
     )
     
     # Configuración de filtros
