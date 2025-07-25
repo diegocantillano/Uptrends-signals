@@ -6,8 +6,7 @@ Una herramienta avanzada de análisis técnico que utiliza algoritmos cuantitati
 
 ## 📊 Demo en Vivo
 
-🔗 https://uptrends-signals.streamlit.app/
-
+🔗 **[Ver Aplicación](https://uptrends-signals.streamlit.app/)** 
 ## ✨ Características Principales
 
 ### 🎯 **Algoritmo Uptrend Cuantitativo**
@@ -141,27 +140,43 @@ def calculate_uptrend_score(data):
 
 ## 📊 Ejemplos de Uso
 
-### **Caso 1: Análisis de Acciones Tech**
+### **Caso 1: Análisis S&P 500 Mega Cap**
 ```python
-# Configuración recomendada
-categories = ['📈 Acciones US']
-min_score = 70
+# Configuración para las empresas más grandes
+categories = ['🏆 S&P 500 Mega Cap']
+min_score = 75  # Más estricto para mega caps
 show_all = False
 
 # Resultado esperado
-# NVDA: Score 85 ✅ (Señal fuerte)
+# NVDA: Score 88 ✅ (Tendencia muy fuerte)
+# MSFT: Score 79 ✅ (Tendencia sólida)
 # AAPL: Score 72 ✅ (Señal moderada)
 ```
 
-### **Caso 2: Screening de Criptomonedas**
+### **Caso 2: Screening por Sectores**
 ```python
-# Para mercados volátiles
-categories = ['₿ Criptomonedas']
-min_score = 65  # Más conservador
+# Para análisis sectorial específico
+categories = ['💻 Tech Leaders', '🧬 Biotech/Pharma']
+min_score = 65
 show_all = True
 
-# Análisis de 10 criptos principales
-# Detección de breakouts tempranos
+# Análisis comparativo entre sectores
+# Identifica líderes sectoriales en uptrend
+```
+
+### **Caso 3: Cobertura Completa del Mercado**
+```python
+# Para análisis exhaustivo del mercado US
+categories = [
+    '🏆 S&P 500 Mega Cap',
+    '📈 S&P 500 Large Cap', 
+    '📊 S&P 500 Mid Cap',
+    '🚀 NASDAQ Growth'
+]
+min_score = 60
+
+# Análisis de 200+ acciones principales
+# Vista panorámica del mercado
 ```
 
 ## 🛡️ Limitaciones y Disclaimers
@@ -214,4 +229,28 @@ show_all = True
 ## 📞 Soporte y Contacto
 
 - 🐛 **Reportar Bugs**: [Issues](https://github.com/diegocantillano/uptrend-signals/issues)
-- 💡 **Sugerir Features**: [Discussions](https://github.com/diegocantillano
+- 💡 **Sugerir Features**: [Discussions](https://github.com/diegocantillano/uptrend-signals/discussions)
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 🙏 Agradecimientos
+
+- **Yahoo Finance** por los datos de mercado
+- **Streamlit** por la excelente plataforma
+- **Plotly** por las visualizaciones interactivas
+- **TA-Lib** por los indicadores técnicos
+- **Comunidad Open Source** por la inspiración
+
+---
+
+<div align="center">
+
+**⭐ Si te gusta este proyecto, dale una estrella ⭐**
+
+**🚀 Hecho con ❤️ para la comunidad de trading**
+
+[🔝 Volver arriba](#-uptrend-signals-pro)
+
+</div>
