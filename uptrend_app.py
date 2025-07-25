@@ -1,14 +1,33 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import yfinance as yf
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
-import ta
 from concurrent.futures import ThreadPoolExecutor
 import warnings
+import requests
+import json
 warnings.filterwarnings('ignore')
+
+# Instalación automática de dependencias si no están disponibles
+try:
+    import yfinance as yf
+except ImportError:
+    st.error("📦 Installing yfinance...")
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "yfinance"])
+    import yfinance as yf
+
+try:
+    import ta
+except ImportError:
+    st.error("📦 Installing ta...")
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "ta"])
+    import ta
 
 # Configuración de la página
 st.set_page_config(
@@ -70,7 +89,43 @@ class UptrendAnalyzer:
                 return None
             return data
         except Exception as e:
-            st.error(f"Error obteniendo datos para {symbol}: {str(e)}")
+            # En caso de error, generar datos simulados para demostración
+            if st.session_state.get('demo_mode', False):
+                return self.generate_demo_data(symbol)
+            st.warning(f"Error obteniendo datos para {symbol}: {str(e)}")
+            return None
+    
+    def generate_demo_data(self, symbol):
+        """Genera datos simulados para demostración"""
+        try:
+            dates = pd.date_range(start=datetime.now() - timedelta(days=180), 
+                                end=datetime.now(), freq='D')
+            np.random.seed(hash(symbol) % 2147483647)  # Seed basado en el símbolo
+            
+            # Generar datos simulados con tendencia alcista
+            base_price = 100 + np.random.uniform(-50, 200)
+            returns = np.random.normal(0.001, 0.02, len(dates))  # Tendencia alcista leve
+            prices = [base_price]
+            
+            for ret in returns[1:]:
+                prices.append(prices[-1] * (1 + ret))
+            
+            # Crear DataFrame con formato de yfinance
+            data = pd.DataFrame({
+                'Open': prices,
+                'High': [p * (1 + np.random.uniform(0, 0.03)) for p in prices],
+                'Low': [p * (1 - np.random.uniform(0, 0.03)) for p in prices],
+                'Close': prices,
+                'Volume': np.random.randint(1000000, 10000000, len(dates))
+            }, index=dates)
+            
+            # Ajustar High y Low para que sean consistentes
+            data['High'] = np.maximum(data[['Open', 'Close']].max(axis=1), data['High'])
+            data['Low'] = np.minimum(data[['Open', 'Close']].min(axis=1), data['Low'])
+            
+            return data
+        except Exception as e:
+            st.error(f"Error generando datos demo: {str(e)}")
             return None
     
     def calculate_indicators(self, data):
@@ -187,10 +242,25 @@ class UptrendAnalyzer:
 def main():
     st.markdown('<h1 class="main-header">🚀 Uptrend Signals Pro</h1>', unsafe_allow_html=True)
     
+    # Inicializar session state
+    if 'demo_mode' not in st.session_state:
+        st.session_state.demo_mode = False
+    
     analyzer = UptrendAnalyzer()
     
     # Sidebar
     st.sidebar.markdown('<div class="sidebar-info"><h3>📊 Panel de Control</h3></div>', unsafe_allow_html=True)
+    
+    # Modo demo para cuando no hay conexión a internet
+    demo_mode = st.sidebar.checkbox(
+        "🧪 Modo Demo (datos simulados)", 
+        value=st.session_state.demo_mode,
+        help="Usa datos simulados si no tienes conexión a internet"
+    )
+    st.session_state.demo_mode = demo_mode
+    
+    if demo_mode:
+        st.sidebar.warning("⚠️ Usando datos simulados para demostración")
     
     # Selección de categorías
     categories = {
@@ -213,6 +283,17 @@ def main():
     
     if st.sidebar.button("🔄 Actualizar Análisis", type="primary"):
         st.rerun()
+    
+    # Test de conexión
+    if not demo_mode:
+        with st.sidebar:
+            if st.button("🔍 Test Conexión"):
+                with st.spinner("Probando conexión..."):
+                    test_result = analyzer.analyze_symbol('AAPL')
+                    if test_result:
+                        st.success("✅ Conexión OK")
+                    else:
+                        st.error("❌ Sin conexión - Activa modo demo")
     
     # Información sobre el algoritmo
     with st.sidebar.expander("ℹ️ Sobre el Algoritmo Uptrend"):
